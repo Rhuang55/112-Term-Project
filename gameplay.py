@@ -14,12 +14,12 @@ def init(data):
     data.buggy = Buggy()
     data.track = Track()
     data.crashed = False
-    data.potholes = [Pothole().generate()]
+    data.potholes = [Pothole()]
+    data.pedestrians = []
+    data.yellowLines = [[295, 305, 305, 295, -60]] + \
+        [data.track.makeYellowLines(i) for i in range(data.height) \
+        if i % 120 == 60]
     data.timeClock = 0
-
-def mousePressed(event, data):
-    # use event.x and event.y
-    pass
 
 def keyPressed(event, data):
 
@@ -30,33 +30,44 @@ def keyPressed(event, data):
         data.buggy.brake()
     
     if event.keysym == "Left":
-        angle = pi / 12
-        if not data.buggy.angle >= pi:
-            data.buggy.turn(angle)
+        data.buggy.turnLeft()
         
     if event.keysym == "Right":
-        angle = -pi / 12
-        if not data.buggy.angle <= 0:
-            data.buggy.turn(angle)
-    
-    if event.keysym == "r":
-        data.crashed = False
+        data.buggy.turnRight()
 
 def timerFired(data):
     if not data.crashed:
-        #data.crashed = data.buggy.isCollision(data.track)
+        data.crashed = data.buggy.isCollision(data.track)
         data.buggy.roll()
+        
+        newLines = []
         for pothole in data.potholes:
-            pothole[1] += 0.5
-            
+            pothole.y += 0.5
+        for pedest in data.pedestrians:
+            pedest[1] += 0.5
+            pedest[0] += pedest[2]
+        for line in data.yellowLines:
+            if line[4] == 660:
+                newLines.append([295, 305, 305, 295,-60])
+            if line[4] < 660:
+                newLines.append(line)
+            line[4] += 0.5
+        data.yellowLines = newLines
+        
         data.timeClock += 1
-        if data.timeClock % 200 == 0:
-            data.potholes.append(Pothole().generate())
+        if data.timeClock % 300 == 0:
+            data.potholes.append(Pothole())
+        if data.timeClock % 500 == 0:
+            data.pedestrians.append(Pedestrian().generate())
 
 def redrawAll(canvas, data):
     data.track.draw(canvas)
+    for line in data.yellowLines:
+        data.track.drawYellowLines(canvas, line)
     for pothole in data.potholes:
-        Pothole.draw(canvas, pothole[0], pothole[1], pothole[2])
+        pothole.draw(canvas, pothole.x, pothole.y)
+    for pedest in data.pedestrians:
+        Pedestrian.draw(canvas, pedest[0], pedest[1])
     data.buggy.draw(canvas)
 
 ####################################
