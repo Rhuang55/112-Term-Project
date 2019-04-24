@@ -15,12 +15,13 @@ class Buggy(object):
         self.name = "Solaris"
         self.x = x
         self.y = y
-        self.rollspeed = 0.25
+        self.rollspeed = 0.5
         self.angle = pi / 2
         self.width = 55
-        self.height = 110
+        self.height = 100
         self.lives = 3
         self.image = PhotoImage(file = "sprites/solaris.gif")
+        self.immune = False
     
     def draw(self, canvas):
         canvas.create_image(self.x, self.y, image = self.image)
@@ -49,7 +50,7 @@ class Buggy(object):
                 self.angle += angle
     
     def roll(self):
-        self.y -= self.rollspeed
+        self.y -= (self.rollspeed - 0.5)
         self.x += self.rollspeed * cos(self.angle)
 
     def isCollision(self, other):

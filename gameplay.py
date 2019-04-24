@@ -14,6 +14,8 @@ def init(data):
     data.buggy = Buggy()
     data.track = Track()
     data.crashed = False
+    data.drawBuggy = True
+    data.immuneTime = 0
     data.potholes = [Pothole()]
     data.pedestrians = []
     data.yellowLines = [[295, 305, 305, 295, -60]] + \
@@ -37,38 +39,73 @@ def keyPressed(event, data):
 
 def timerFired(data):
     if not data.crashed:
-        data.crashed = data.buggy.isCollision(data.track)
         data.buggy.roll()
-        
         newLines = []
+        newPedestrians = []
+        
+        if data.track.isCollision(data.buggy) and data.buggy.immune == False:
+            crash(data)
+        
         for pothole in data.potholes:
-            pothole.y += 0.5
+            pothole.y += 1
+            if pothole.isCollision(data.buggy) and data.buggy.immune == False:
+                crash(data)
+
         for pedest in data.pedestrians:
-            pedest[1] += 0.5
-            pedest[0] += pedest[2]
+            pedest.y += 1
+            pedest.x += pedest.speed
+            if pedest.isCollision(data.buggy):
+                if data.buggy.immune == False:
+                    crash(data)
+            elif pedest.x < 0 or pedest.x > 600:
+                pass
+            else:
+                newPedestrians.append(pedest)
+        data.pedestrians = newPedestrians
+        
         for line in data.yellowLines:
             if line[4] == 660:
                 newLines.append([295, 305, 305, 295,-60])
             if line[4] < 660:
                 newLines.append(line)
-            line[4] += 0.5
+            line[4] += 1
         data.yellowLines = newLines
         
         data.timeClock += 1
-        if data.timeClock % 300 == 0:
+        if data.timeClock % 150 == 0:
             data.potholes.append(Pothole())
-        if data.timeClock % 500 == 0:
-            data.pedestrians.append(Pedestrian().generate())
+        if data.timeClock % 250 == 0:
+            data.pedestrians.append(Pedestrian())
+        if data.buggy.immune == True:
+            if data.timeClock < data.immuneTime + 200:
+                timeDiff = data.timeClock - data.immuneTime
+                if 0 < timeDiff <= 25 or 50 < timeDiff <= 75 \
+                    or 100 < timeDiff <= 125 or 150 < timeDiff <= 175:
+                        data.drawBuggy = False
+                else:
+                    data.drawBuggy = True
+            else:
+                data.buggy.immune = False
+                data.drawBuggy = True
+
+def crash(data):
+    if data.buggy.lives > 1:
+        #data.buggy.lives -= 1
+        data.buggy.immune = True
+        data.immuneTime = data.timeClock
+    else:
+        data.crashed = True
 
 def redrawAll(canvas, data):
     data.track.draw(canvas)
     for line in data.yellowLines:
         data.track.drawYellowLines(canvas, line)
     for pothole in data.potholes:
-        pothole.draw(canvas, pothole.x, pothole.y)
+        pothole.draw(canvas)
     for pedest in data.pedestrians:
-        Pedestrian.draw(canvas, pedest[0], pedest[1])
-    data.buggy.draw(canvas)
+        pedest.draw(canvas)
+    if data.drawBuggy:
+        data.buggy.draw(canvas)
 
 ####################################
 # Run function general framework taken from 15-112 course notes: https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
@@ -100,7 +137,7 @@ def run(width=300, height=300):
     data = Struct()
     data.width = width
     data.height = height
-    data.timerDelay = 5 # milliseconds
+    data.timerDelay = 10 # milliseconds
     root = Tk()
     root.resizable(width=False, height=False) # prevents resizing window
     init(data)

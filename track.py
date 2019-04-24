@@ -53,8 +53,7 @@ class Track(object):
             fill = "yellow")
     
     def isCollision(self, other):
-        if isinstance(other, Buggy):
-            if other.leftX1 >= self.x - self.width // 2 or other.rightX0 <= \
-                self.x + self.width // 2:
-                    return True
+        if self.leftX1 >= other.x - other.width // 2 or self.rightX0 <= \
+            other.x + other.width // 2:
+                return True
         return False
