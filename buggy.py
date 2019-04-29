@@ -52,10 +52,3 @@ class Buggy(object):
     def roll(self):
         self.y -= (self.rollspeed - 0.5)
         self.x += self.rollspeed * cos(self.angle)
-
-    def isCollision(self, other):
-        if isinstance(other, Track):
-            if other.leftX1 >= self.x - self.width // 2 or other.rightX0 <= \
-                self.x + self.width // 2:
-                    return True
-        return False

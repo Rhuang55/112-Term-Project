@@ -11,8 +11,10 @@ from buggy import *
 class Pothole(object):
     
     def __init__(self):
-        self.x = randint(200, 400)
+        self.x0 = randint(175, 425)
+        self.x = self.x0
         self.y = 0
+        self.moveCounter = 0
         
         size15 = PhotoImage(file = "sprites/pothole15.gif")
         size20 = PhotoImage(file = "sprites/pothole20.gif")
@@ -21,13 +23,15 @@ class Pothole(object):
 
         if imageSelect == 0:
             self.image = size15
-            self.r = 15
+            self.r0 = 15
         elif imageSelect == 1:
             self.image = size20
-            self.r = 20
+            self.r0 = 20
         elif imageSelect == 2:
             self.image = size25
-            self.r = 25
+            self.r0 = 25
+        
+        self.r = self.r0
     
     def draw(self, canvas):
         canvas.create_image(self.x, self.y, image = self.image)
@@ -47,6 +51,17 @@ class Pothole(object):
         distY = abs(self.y - buggyHeight)
         
         return distX ** 2 + distY ** 2 <= self.r ** 2 - (self.r / 3)
+    
+    def moveX(self):
+        if self.x0 > 300:
+            ratio = (425 - self.x0) / 125
+            curbX = (2550 + self.y) / 6
+            self.x = curbX - ratio * (curbX - 300)
+        
+        elif self.x0 < 300:
+            ratio = (self.x0 - 175) / 125
+            curbX = (1050 - self.y) / 6
+            self.x = curbX + ratio * (300 - curbX)
 
 class Pedestrian(object):
     

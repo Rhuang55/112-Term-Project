@@ -9,6 +9,7 @@ from math import *
 from buggy import *
 from track import *
 from obstacle import *
+from powerup import *
 
 def init(data):
     data.buggy = Buggy()
@@ -16,7 +17,7 @@ def init(data):
     data.crashed = False
     data.drawBuggy = True
     data.immuneTime = 0
-    data.potholes = [Pothole()]
+    data.potholes = []
     data.pedestrians = []
     data.yellowLines = [[295, 305, 305, 295, -60]] + \
         [data.track.makeYellowLines(i) for i in range(data.height) \
@@ -42,14 +43,22 @@ def timerFired(data):
         data.buggy.roll()
         newLines = []
         newPedestrians = []
+        newPotholes = []
         
         if data.track.isCollision(data.buggy) and data.buggy.immune == False:
             crash(data)
         
         for pothole in data.potholes:
             pothole.y += 1
+            pothole.moveX()
             if pothole.isCollision(data.buggy) and data.buggy.immune == False:
                 crash(data)
+                newPotholes.append(pothole)
+            elif pothole.y > 600 + pothole.r:
+                pass
+            else:
+                newPotholes.append(pothole)
+        data.potholes = newPotholes
 
         for pedest in data.pedestrians:
             pedest.y += 1
@@ -71,9 +80,9 @@ def timerFired(data):
             line[4] += 1
         data.yellowLines = newLines
         
-        data.timeClock += 1
         if data.timeClock % 150 == 0:
             data.potholes.append(Pothole())
+        data.timeClock += 1
         if data.timeClock % 250 == 0:
             data.pedestrians.append(Pedestrian())
         if data.buggy.immune == True:
@@ -90,7 +99,7 @@ def timerFired(data):
 
 def crash(data):
     if data.buggy.lives > 1:
-        #data.buggy.lives -= 1
+        data.buggy.lives -= 1
         data.buggy.immune = True
         data.immuneTime = data.timeClock
     else:
