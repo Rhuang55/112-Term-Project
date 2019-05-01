@@ -67,18 +67,34 @@ class Track(object):
 
 class Indicators(object):
     
-    def __init__(self):
-        self.heartX = 25
-        self.heartY = 25
-        self.heartImage = PhotoImage(file = "sprites/heart.gif")
+    def __init__(self, num):
+        self.player = num
         
-        self.potholeX = 550
-        self.potholeY = 15
-        self.potholeImage = PhotoImage(file = "sprites/potholeIndic.gif")
+        if self.player == 1:
+            self.heartX = 567
+            self.heartY = 60
+            self.heartImage = PhotoImage(file = "sprites/heart.gif")
+            
+            self.potholeX = 550
+            self.potholeY = 15
+            self.potholeImage = PhotoImage(file = "sprites/potholeIndic.gif")
+            
+            self.pedestX = 585
+            self.pedestY = 15
+            self.pedestImage = PhotoImage(file = "sprites/pedestIndic.gif")
         
-        self.pedestX = 585
-        self.pedestY = 15
-        self.pedestImage = PhotoImage(file = "sprites/pedestIndic.gif")
+        elif self.player == 2:
+            self.heartX = 33
+            self.heartY = 60
+            self.heartImage = PhotoImage(file = "sprites/heart.gif")
+            
+            self.potholeX = 16
+            self.potholeY = 15
+            self.potholeImage = PhotoImage(file = "sprites/potholeIndic.gif")
+            
+            self.pedestX = 48
+            self.pedestY = 15
+            self.pedestImage = PhotoImage(file = "sprites/pedestIndic.gif")
     
     def drawHeart(self, canvas):
         canvas.create_image(self.heartX, self.heartY, image = self.heartImage)

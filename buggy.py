@@ -11,7 +11,7 @@ from math import *
 
 class Buggy(object):
 
-    def __init__(self, x=300, y=500):
+    def __init__(self, image, x=300, y=500):
         self.name = "Solaris"
         self.x = x
         self.y = y
@@ -20,7 +20,7 @@ class Buggy(object):
         self.width = 55
         self.height = 100
         self.lives = 3
-        self.image = PhotoImage(file = "sprites/solaris.gif")
+        self.image = image
         self.immune = False
     
     def draw(self, canvas):
