@@ -53,10 +53,10 @@ class Pothole(object):
         if distX ** 2 + distY ** 2 <= self.r ** 2:
             return True
             
-        if other.x > self.x:
+        if other.x > self.x and other.y >= self.y:
             if other.x - self.x - self.r <= 0:
                 return other.y - other.height / 2 <= self.y + self.r
-        else:
+        elif self.x > other.x and other.y >= self.y:
             if self.x - self.r - other.x <=0:
                 return other.y - other.height / 2 <= self.y + self.r
     

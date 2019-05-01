@@ -11,6 +11,7 @@ from track import *
 from obstacle import *
 from powerup import *
 from startscreen import *
+from gameover import *
 
 def init(data):
     data.buggy = Buggy()
@@ -29,6 +30,7 @@ def init(data):
         if i % 120 == 60]
     data.timeClock = 0
     data.startscreen = Startscreen()
+    data.gameover = Gameover()
     data.start = True
 
 def keyPressed(event, data):
@@ -56,10 +58,27 @@ def keyPressed(event, data):
             data.pedestRemover = False
 
 def mousePressed(event, data):
+    
     if data.start == True:
         if data.startscreen.p1x0 <= event.x <= data.startscreen.p1x1 and \
             data.startscreen.p1y0 <= event.y <= data.startscreen.p1y1:
                 data.start = False
+    
+    if data.crashed == True:
+        if data.gameover.x0 <= event.x <= data.gameover.x1 and \
+            data.gameover.y0 <= event.y <= data.gameover.y1:
+                data.buggy = Buggy()
+                data.indics = Indicators()
+                data.crashed = False
+                data.potholes = []
+                data.pedestrians = []
+                data.flags = []
+                data.pedestRemover = False
+                data.potholeRemover = False
+                data.yellowLines = [[295, 305, 305, 295, -60]] + \
+                    [data.track.makeYellowLines(i) for i in range(data.height) \
+                    if i % 120 == 60]
+                data.start = True
 
 def timerFired(data):
    
@@ -88,8 +107,9 @@ def timerFired(data):
         for pothole in data.potholes:
             pothole.y += 1
             pothole.moveX()
-            if pothole.isCollision(data.buggy) and data.buggy.immune == False:
-                crash(data)
+            if pothole.isCollision(data.buggy):
+                if data.buggy.immune == False:
+                    crash(data)
             elif pothole.y > 600 + pothole.r:
                 pass
             else:
@@ -177,11 +197,15 @@ def redrawAll(canvas, data):
             data.buggy.draw(canvas)
         drawLifeIndic(canvas, data)
         drawPowerUpIndic(canvas, data)
-    else:
+        
+    elif data.start == True:
         data.track.draw(canvas)
         for line in data.yellowLines:
             data.track.drawYellowLines(canvas, line)
         data.startscreen.draw(canvas)
+        
+    if data.crashed == True:
+        data.gameover.draw(canvas)
 
 def drawLifeIndic(canvas, data):
     data.indics.drawHeart(canvas)
