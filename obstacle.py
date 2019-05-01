@@ -4,7 +4,7 @@
 # Section: E
 ####################################
 
-import tkinter
+from tkinter import *
 from random import *
 from buggy import *
 
@@ -43,14 +43,22 @@ class Pothole(object):
             buggyWidth = other.x + other.width / 2
         
         if other.y > self.y:
-            buggyHeight = other.y - other.height / 2 - 5
+            buggyHeight = other.y - other.height / 2
         else:
-            buggyHeight = other.y + other.height / 2 + 5
+            buggyHeight = other.y + other.height / 2
             
         distX = abs(self.x - buggyWidth)
         distY = abs(self.y - buggyHeight)
         
-        return distX ** 2 + distY ** 2 <= self.r ** 2 - (self.r / 3)
+        if distX ** 2 + distY ** 2 <= self.r ** 2:
+            return True
+            
+        if other.x > self.x:
+            if other.x - self.x - self.r <= 0:
+                return other.y - other.height / 2 <= self.y + self.r
+        else:
+            if self.x - self.r - other.x <=0:
+                return other.y - other.height / 2 <= self.y + self.r
     
     def moveX(self):
         if self.x0 > 300:
@@ -72,8 +80,14 @@ class Pedestrian(object):
         self.width = 42
         self.height = 72
         self.speed = -1 if self.x == 600 else 1
-        self.image = PhotoImage(file = "sprites/pedestrian.gif")
-    
+        
+        walkRight = PhotoImage(file = "sprites/pedestrian.gif")
+        walkLeft = PhotoImage(file = "sprites/pedestrian2.gif")
+        if self.x == 0:
+            self.image = walkRight
+        else:
+            self.image = walkLeft
+
     def draw(self, canvas):
         canvas.create_image(self.x, self.y, image = self.image)
     
@@ -83,7 +97,12 @@ class Pedestrian(object):
         other.upY = other.y - other.height / 2
         other.downY = other.y + other.height / 2
         
-        if other.leftX <= self.x <= other.rightX and \
-            other.upY <= self.y <= other.downY:
-                return True
+        self.leftX = self.x - self.width / 2 + 2
+        self.rightX = self.x + self.width / 2 - 2
+        self.upY = self.y - self.height / 2 + 2
+        self.downY = self.y + self.height / 2 - 2
+        
+        if self.rightX >= other.leftX and self.leftX <= other.rightX \
+            and self.upY <= other.downY and self.downY >= other.upY:
+                return True 
         return False

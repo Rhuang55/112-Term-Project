@@ -4,7 +4,7 @@
 # Section: E
 ####################################
 
-import tkinter
+from tkinter import *
 from buggy import *
 
 class Track(object):
@@ -59,5 +59,34 @@ class Track(object):
             return True
         if rightCurb <= other.x + other.width / 2:
             return True
+        if not (0 <= other.y + other.height / 2):
+            return True
+        if not (other.y - other.height / 2 <= 600):
+            return True
         return False
+
+class Indicators(object):
+    
+    def __init__(self):
+        self.heartX = 25
+        self.heartY = 25
+        self.heartImage = PhotoImage(file = "sprites/heart.gif")
         
+        self.potholeX = 550
+        self.potholeY = 15
+        self.potholeImage = PhotoImage(file = "sprites/potholeIndic.gif")
+        
+        self.pedestX = 585
+        self.pedestY = 15
+        self.pedestImage = PhotoImage(file = "sprites/pedestIndic.gif")
+    
+    def drawHeart(self, canvas):
+        canvas.create_image(self.heartX, self.heartY, image = self.heartImage)
+    
+    def drawPothole(self, canvas):
+        canvas.create_image(self.potholeX, self.potholeY, \
+            image = self.potholeImage)
+    
+    def drawPedest(self, canvas):
+        canvas.create_image(self.pedestX, self.pedestY, \
+            image = self.pedestImage)

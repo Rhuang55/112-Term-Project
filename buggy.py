@@ -16,7 +16,7 @@ class Buggy(object):
         self.x = x
         self.y = y
         self.rollspeed = 0.5
-        self.angle = pi / 2
+        self.xspeed = 0
         self.width = 55
         self.height = 100
         self.lives = 3
@@ -34,21 +34,13 @@ class Buggy(object):
         self.rollspeed += 0.1
         
     def turnLeft(self):
-        angle = pi / 12
-        if self.angle < pi:
-            if self.rollspeed >= 0:
-                self.angle += angle
-            else:
-                self.angle -= angle
+        if self.xspeed > -0.5:
+            self.xspeed -= 0.1
     
     def turnRight(self):
-        angle = pi / 12
-        if self.angle > 0:
-            if self.rollspeed >= 0:
-                self.angle -= angle
-            else:
-                self.angle += angle
+        if self.xspeed < 0.5:
+            self.xspeed += 0.1
     
     def roll(self):
         self.y -= (self.rollspeed - 0.5)
-        self.x += self.rollspeed * cos(self.angle)
+        self.x += self.xspeed * (self.rollspeed + 0.5)
