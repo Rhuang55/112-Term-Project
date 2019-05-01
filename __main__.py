@@ -15,7 +15,7 @@ from gameover import *
 
 def init(data):
     data.buggy = Buggy(PhotoImage(file = "sprites/solaris.gif"))
-    data.buggy2 = Buggy(PhotoImage(file = "sprites/sdc.gif"), 200)
+    data.buggy2 = Buggy(PhotoImage(file = "sprites/sdc.gif"))
     data.track = Track()
     data.indics = Indicators(1)
     data.indics2 = Indicators(2)
@@ -36,7 +36,7 @@ def init(data):
         if i % 120 == 60]
     data.timeClock = 0
     data.startscreen = Startscreen()
-    data.gameover = Gameover()
+    data.gameover = Gameover(0)
     data.start = True
     data.twoplayers = False
 
@@ -99,6 +99,7 @@ def mousePressed(event, data):
                 data.start = False
                 data.twoplayers = True
                 data.buggy = Buggy(PhotoImage(file = "sprites/solaris.gif"), 400)
+                data.buggy2 = Buggy(PhotoImage(file = "sprites/sdc.gif"), 200)
                 
     
     if data.crashed == True:
@@ -106,9 +107,11 @@ def mousePressed(event, data):
             data.gameover.y0 <= event.y <= data.gameover.y1:
                 data.buggy = Buggy(PhotoImage(file = "sprites/solaris.gif"))
                 data.buggy2 = Buggy(PhotoImage(file = "sprites/sdc.gif"))
-                data.indicsp1 = Indicators()
-                data.indicsp2 = Indicators()
+                data.indics = Indicators(1)
+                data.indics2 = Indicators(2)
                 data.crashed = False
+                data.drawBuggy = True
+                data.drawBuggy2 = True
                 data.potholes = []
                 data.pedestrians = []
                 data.flags = []
@@ -238,6 +241,10 @@ def crash(data, num):
         else:
             data.buggy.lives -= 1
             data.crashed = True
+            if data.twoplayers:
+                data.gameover = Gameover(2)
+            else:
+                data.gameover = Gameover(0)
     
     else:
         if data.buggy2.lives > 1:
@@ -247,6 +254,7 @@ def crash(data, num):
         else:
             data.buggy2.lives -= 1
             data.crashed = True
+            data.gameover = Gameover(1)
 
 def getPowerUp(data, num):
     options = ["lives"]
@@ -341,7 +349,6 @@ def drawPowerUpIndic(canvas, data):
         if data.pedestRemover2 == True:
             data.indics2.drawPedest(canvas)
         
-
 ####################################
 # Run function general framework taken from 15-112 course notes: https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
 ####################################
