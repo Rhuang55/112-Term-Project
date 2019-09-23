@@ -1,7 +1,9 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File contains all of the OOP for the obstacles on the track, including the
+# potholes and pedestrians. This includes checking for collisions and drawing.
+
+#obstacle.py Citation Comment:
+#Lines 9-110: Original code
 ####################################
 
 from tkinter import *

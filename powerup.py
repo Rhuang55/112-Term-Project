@@ -1,7 +1,10 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File contains all of the OOP for the Flag objects, which the user interacts
+# with to generate power-ups. This includes moving and drawing the flag, and 
+# detecting collisions.
+
+#powerup.py Citation Comment:
+#Lines 10-58: Original code
 ####################################
 
 from tkinter import *
@@ -53,11 +56,3 @@ class Flag(object):
             and self.upY <= other.downY and self.downY >= other.upY:
                 return True 
         return False
-
-# class Squirrel(object):
-#     
-#     def __init__(self):
-#         self.x = choice([0, 600])
-#         self.y = 0
-#         self.speed = -0.75 if self.x == 600 else 0.75
-#         self.image = 

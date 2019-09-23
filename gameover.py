@@ -1,7 +1,9 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File contains all of the OOP for the Game Over screen, which is displayed
+# after the game ends.
+
+#gameover.py Citation Comment:
+#Lines 9-35: Original code
 ####################################
 
 from tkinter import *

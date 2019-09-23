@@ -1,7 +1,9 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File contains all of the OOP for the Buggy object, which the user drives
+# around the course
+
+#buggy.py Citation Comment:
+#Lines 9-47: Original code
 ####################################
 
 from tkinter import *
@@ -12,7 +14,6 @@ from math import *
 class Buggy(object):
 
     def __init__(self, image, x=300, y=500):
-        self.name = "Solaris"
         self.x = x
         self.y = y
         self.rollspeed = 0.5

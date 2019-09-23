@@ -1,7 +1,13 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File is in charge of running the entire game animation, including storing
+# relevant data in the model, using key presses and mouse clicks to interact
+# with the game and model, updating data every 10 ms, and drawing everything on
+# the screen.
+
+#__main__.py Citation Comment:
+#Lines 13-376: Original code
+#Lines 377-421: Code adapted and modified from Time-Based Animation starter code
+#on the 15-112 website
 ####################################
 
 from tkinter import *
@@ -39,6 +45,8 @@ def init(data):
     data.gameover = Gameover(0)
     data.start = True
     data.twoplayers = False
+    data.score = 0
+    data.scoreboard = Scoreboard()
 
 def keyPressed(event, data):
 
@@ -100,7 +108,9 @@ def mousePressed(event, data):
                 data.twoplayers = True
                 data.buggy = Buggy(PhotoImage(file = "sprites/solaris.gif"), 400)
                 data.buggy2 = Buggy(PhotoImage(file = "sprites/sdc.gif"), 200)
-                
+        if data.startscreen.scorex0 <= event.x <= data.startscreen.scorex1 and \
+            data.startscreen.scorey0 <= event.y <= data.startscreen.scorey1:
+                printScores(data)
     
     if data.crashed == True:
         if data.gameover.x0 <= event.x <= data.gameover.x1 and \
@@ -124,6 +134,15 @@ def mousePressed(event, data):
                     if i % 120 == 60]
                 data.start = True
                 data.twoplayers = False
+                data.score = 0
+
+def printScores(data):
+    data.scoreboard.getScores()
+    scoreList = data.scoreboard.highscores
+    print("\n")
+    print("Here are the high scores:")
+    for entry in scoreList:
+        print(entry[0], ": ", str(entry[1]), sep = "")
 
 def timerFired(data):
    
@@ -192,6 +211,7 @@ def timerFired(data):
             flag.moveX()
             if flag.isCollision(data.buggy):
                 getPowerUp(data, 1)
+                data.score += 5
             elif data.twoplayers and flag.isCollision(data.buggy2):
                 getPowerUp(data, 2)
             elif flag.y - flag.height > 600:
@@ -203,6 +223,8 @@ def timerFired(data):
         if data.timeClock % 150 == 0: #every 1.5 seconds
             data.potholes.append(Pothole())
         data.timeClock += 1
+        if data.timeClock % 100 == 0:
+            data.score += 1
         if data.timeClock % 250 == 0:
             data.pedestrians.append(Pedestrian())
         if data.timeClock % 500 == 0:
@@ -245,7 +267,10 @@ def crash(data, num):
                 data.gameover = Gameover(2)
             else:
                 data.gameover = Gameover(0)
-    
+                data.scoreboard.getScores()
+                data.scoreboard.checkScore(data.score)
+                data.scoreboard.storeScores()
+
     else:
         if data.buggy2.lives > 1:
             data.buggy2.lives -= 1
@@ -282,13 +307,10 @@ def getPowerUp(data, num):
     else:
         if powerUp == "pothole":
             data.potholeRemover2 = True
-            print("pot")
         if powerUp == "pedest":
             data.pedestRemover2 = True
-            print("pedest")
         if powerUp == "lives":
             data.buggy2.lives += 1
-            print("lives")
 
 def redrawAll(canvas, data):
     if not data.start == True:
@@ -310,6 +332,8 @@ def redrawAll(canvas, data):
 
         drawLifeIndic(canvas, data)
         drawPowerUpIndic(canvas, data)
+        if not data.twoplayers:
+            canvas.create_text(75, 30, text = "Score: " + str(data.score), font = "Helvetica 24 bold", fill = "white")
         
     elif data.start == True:
         data.track.draw(canvas)
@@ -348,10 +372,8 @@ def drawPowerUpIndic(canvas, data):
             data.indics2.drawPothole(canvas)
         if data.pedestRemover2 == True:
             data.indics2.drawPedest(canvas)
-        
-####################################
-# Run function general framework taken from 15-112 course notes: https://www.cs.cmu.edu/~112/notes/notes-animations-part2.html
-####################################
+
+
 
 def run(width=600, height=600):
     def redrawAllWrapper(canvas, data):
@@ -382,6 +404,7 @@ def run(width=600, height=600):
     data.timerDelay = 10 # milliseconds
     root = Tk()
     root.resizable(width=False, height=False) # prevents resizing window
+    root.title("Buggy Bash")
     init(data)
     # create the root and the canvas
     canvas = Canvas(root, width=data.width, height=data.height)

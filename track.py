@@ -1,7 +1,11 @@
 ####################################
-# Name: Ryan Huang
-# Andrew: rdhuang
-# Section: E
+# File contains all of the OOP for the Track and Indicator objects. The Track
+# object is responsible for drawing the track and the yellow lines and
+# detecting curb collisions. The indicator object is responsible for creating
+# and drawing life/powerup indicators on the screen.
+
+#track.py Citation Comment:
+#Lines 11-112: Original code
 ####################################
 
 from tkinter import *
